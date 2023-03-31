@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using TO_DO.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -34,6 +35,25 @@ builder.Services.AddAuthentication("Bearer")
 
         };
     });
+
+builder.Services.AddAuthorization(options=>
+{
+    options.AddPolicy("CanTest", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        //policy.RequireClaim("CanTest");
+        policy.RequireAssertion(f =>
+        {
+            var claim = f.User.Claims.FirstOrDefault(c=>c.Type == "permissions");
+            if (claim != null)
+            {
+                var permissions = JsonSerializer.Deserialize<string[]>(claim.Value);
+                return permissions.Contains("CanTest");
+            }
+            return false;
+        });
+    });
+});
 
 builder.Services.AddSwaggerGen(setup =>
 {

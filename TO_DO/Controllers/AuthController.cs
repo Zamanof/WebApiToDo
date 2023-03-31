@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using TO_DO.DTOs.Auth;
 
 namespace TO_DO.Controllers;
@@ -23,8 +24,22 @@ public class AuthController : ControllerBase
         var claims = new[]
         {
             new Claim(ClaimsIdentity.DefaultNameClaimType, "admin"),
-            new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin")
+            new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin"),
+            //new Claim("CanTest", "true")
+            new Claim("permissions", JsonSerializer.Serialize(
+                new []
+                {
+                    "CanTest", 
+                    "CanDelete"
+                }))
         };
+
+        // AAD, B2C, Cognito, KeyCloack
+
+        // admin
+        // moderator
+        // guest
+        // user
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Super Sequrity Key"));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

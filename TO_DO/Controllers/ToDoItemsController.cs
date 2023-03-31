@@ -22,13 +22,13 @@ public class ToDoItemsController : ControllerBase
 
     // GET: api/<ToDoItemsController>
     [HttpGet]
-    public async Task<ActionResult<PaginatedListDto<ToDoItemDto>>>GetList(
-        [FromQuery] ToDoQueryFilters filters,
-        [FromQuery] PaginationRequest request
-        )
+    public async Task<ActionResult<PaginatedListDto<ToDoItemDto>>> GetList(
+            [FromQuery] ToDoQueryFilters filters,
+            [FromQuery] PaginationRequest request
+            )
     {
         return await _toDoService.GetToDoItems(
-            request.Page, 
+            request.Page,
             request.PageSize,
             filters.Search,
             filters.IsCompleted
@@ -41,11 +41,12 @@ public class ToDoItemsController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+   
     [HttpGet("{id}")]
     public async Task<ActionResult<ToDoItemDto>> Get(int id)
     {
         var item = await _toDoService.GetToDoItem(id);
-        return item != null 
+        return item != null
             ? item // Ok(item)
             : NotFound();
     }
@@ -58,6 +59,7 @@ public class ToDoItemsController : ControllerBase
     /// <response code="201">Success</response>
     /// <response code="409">Task already created</response>
     /// <response code="403">Forbiden</response>
+ 
     [HttpPost]
     public async Task<ActionResult<ToDoItemDto>> Create([FromBody] CreateToDoItemRequest request)
     {
@@ -66,14 +68,15 @@ public class ToDoItemsController : ControllerBase
     }
 
     // Patch api/<ToDoItemsController>/5/status
+
     [HttpPatch("{id}/status")]
     public async Task<ActionResult<ToDoItemDto>> Patch(int id, [FromBody] bool isCompleted)
     {
         var todoItem = await _toDoService.ChangeTodoItemStatus(id, isCompleted);
         return todoItem != null
-            ?todoItem
-            :NotFound();
-    }       
+            ? todoItem
+            : NotFound();
+    }
 }
 
 // MVC
