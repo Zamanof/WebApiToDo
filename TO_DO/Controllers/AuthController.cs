@@ -120,11 +120,13 @@ public class AuthController : ControllerBase
             claims: claims
             );
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-        var refreshToken = Guid.NewGuid().ToString("N").ToLower();
+        
+        user.RefreshToken= Guid.NewGuid().ToString("N").ToLower();
+        await _userManager.UpdateAsync(user);
         return new AuthTokenDto
         {
             AccessToken = tokenValue,
-            RefreshToken = refreshToken
+            RefreshToken = user.RefreshToken
         };
     }
 
@@ -157,6 +159,7 @@ public class AuthController : ControllerBase
             );
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
         var refreshToken = Guid.NewGuid().ToString("N").ToLower();
+        await _userManager.UpdateAsync(user);
         return new AuthTokenDto
         {
             AccessToken = tokenValue,

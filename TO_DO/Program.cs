@@ -9,6 +9,8 @@ using System.Text.Json;
 using TO_DO.Auth;
 using TO_DO.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -25,7 +27,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ToDoDbContext>();
 
-builder.Services.AddAuthentication("Bearer")
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer("Bearer", options=>
     {
         options.TokenValidationParameters = new TokenValidationParameters
