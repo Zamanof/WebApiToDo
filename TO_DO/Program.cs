@@ -6,6 +6,9 @@ using TO_DO.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
+using TO_DO.Auth;
+using TO_DO.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -18,6 +21,9 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<ToDoDbContext>();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options=>
@@ -41,18 +47,8 @@ builder.Services.AddAuthorization(options=>
     options.AddPolicy("CanTest", policy =>
     {
         policy.RequireAuthenticatedUser();
-        //policy.RequireClaim("CanTest");
-        policy.RequireAssertion(f =>
-        {
-            var claim = f.User.Claims.FirstOrDefault(c=>c.Type == "permissions");
-            if (claim != null)
-            {
-                var permissions = JsonSerializer.Deserialize<string[]>(claim.Value);
-                return permissions.Contains("CanTest");
-            }
-            return false;
-        });
-    });
+        policy.AddRequirements(new CanTestRequirment());
+    });    
 });
 
 builder.Services.AddSwaggerGen(setup =>
