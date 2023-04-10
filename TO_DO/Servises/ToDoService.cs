@@ -20,9 +20,9 @@ public class ToDoService : IToDoService
     /// <param name="id"></param>
     /// <param name="isCompletded"></param>
     /// <returns></returns>
-    public async Task<ToDoItemDto?> ChangeTodoItemStatus(int id, bool isCompletded)
+    public async Task<ToDoItemDto?> ChangeTodoItemStatus(string userId, int id, bool isCompletded)
     {
-        var item = await _dbContext.ToDoItems.FindAsync(id);
+        var item = await _dbContext.ToDoItems.FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
         if (item is null)
         {
             return null;
@@ -39,8 +39,14 @@ public class ToDoService : IToDoService
         };
     }
 
-    public async Task<ToDoItemDto> CreateTodoItem(CreateToDoItemRequest request)
+    public async Task<ToDoItemDto> CreateTodoItem(string userId, CreateToDoItemRequest request)
     {
+        var user = await _dbContext.Users.FindAsync(userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
         var now = DateTime.UtcNow;
         var item = new ToDoItem
         {
@@ -48,6 +54,7 @@ public class ToDoService : IToDoService
             CreatedAt = now,
             UpdatedAt = now,
             IsCompleted = false,
+            UserId = userId
         };
 
         item = _dbContext.ToDoItems.Add(item).Entity;
@@ -64,10 +71,10 @@ public class ToDoService : IToDoService
         };
     }
 
-    public async Task<ToDoItemDto?> GetToDoItem(int id)
+    public async Task<ToDoItemDto?> GetToDoItem(string userId, int id)
     {
-        var item = await _dbContext.ToDoItems.FindAsync(id);
-        
+        var item = await _dbContext.ToDoItems.FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+      
         return item is not null?
         new ToDoItemDto
         {
@@ -79,12 +86,13 @@ public class ToDoService : IToDoService
     }
 
     public async Task<PaginatedListDto<ToDoItemDto>> GetToDoItems(
+        string userId,
         int page,
         int pageSize, 
         string? search,
         bool? isCompleted)
     {
-        IQueryable<ToDoItem> query = _dbContext.ToDoItems;
+        IQueryable<ToDoItem> query = _dbContext.ToDoItems.Where(x=>x.UserId ==  userId);
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(t => t.Text.Contains(search));

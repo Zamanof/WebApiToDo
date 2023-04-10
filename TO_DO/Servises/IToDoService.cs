@@ -7,11 +7,12 @@ namespace TO_DO.Servises;
 public interface IToDoService
 {
     Task<PaginatedListDto<ToDoItemDto>> GetToDoItems(
+        string userId,
         int page,
         int pageSize,
         string? search,
         bool? isCompleted);
-    Task<ToDoItemDto?> GetToDoItem(int id);
-    Task<ToDoItemDto> ChangeTodoItemStatus(int id, bool isCompleted);
-    Task<ToDoItemDto> CreateTodoItem(CreateToDoItemRequest request);
+    Task<ToDoItemDto?> GetToDoItem(string userId, int id);
+    Task<ToDoItemDto> ChangeTodoItemStatus(string userId, int id, bool isCompleted);
+    Task<ToDoItemDto> CreateTodoItem(string userId, CreateToDoItemRequest request);
 }

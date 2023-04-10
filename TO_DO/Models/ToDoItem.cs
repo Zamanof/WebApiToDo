@@ -7,5 +7,6 @@ public class ToDoItem
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 
-
+    public string UserId { get; set; }
+    public virtual AppUser User { get; set; }
 }

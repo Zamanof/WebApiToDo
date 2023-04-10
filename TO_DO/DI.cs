@@ -6,6 +6,7 @@ using System.Text;
 using TO_DO.Auth;
 using TO_DO.Data;
 using TO_DO.Models;
+using TO_DO.Providers;
 
 namespace TO_DO;
 /// <summary>
@@ -67,6 +68,9 @@ public static class DI
     public static IServiceCollection AuthenticationAndAuthorization(
         this IServiceCollection services, IConfiguration configuration)
     {
+
+        services.AddScoped<IRequestUserProvider, RequestUserProvider>();
+
         services.AddIdentity<AppUser, IdentityRole>()
         .AddEntityFrameworkStores<ToDoDbContext>();
 

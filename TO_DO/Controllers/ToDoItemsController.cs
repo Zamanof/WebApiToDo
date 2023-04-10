@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TO_DO.DTOs;
 using TO_DO.DTOs.Pagination;
 using TO_DO.Models;
+using TO_DO.Providers;
 using TO_DO.Servises;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,10 +15,12 @@ namespace TO_DO.Controllers;
 public class ToDoItemsController : ControllerBase
 {
     readonly IToDoService _toDoService;
+    readonly IRequestUserProvider _userProvider;
 
-    public ToDoItemsController(IToDoService toDoService)
+    public ToDoItemsController(IToDoService toDoService, IRequestUserProvider userProvider)
     {
         _toDoService = toDoService;
+        _userProvider = userProvider;
     }
 
     // GET: api/<ToDoItemsController>
@@ -27,7 +30,9 @@ public class ToDoItemsController : ControllerBase
             [FromQuery] PaginationRequest request
             )
     {
+        var user = _userProvider.GetUserInfo();
         return await _toDoService.GetToDoItems(
+            user.Id,
             request.Page,
             request.PageSize,
             filters.Search,
@@ -45,7 +50,8 @@ public class ToDoItemsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ToDoItemDto>> Get(int id)
     {
-        var item = await _toDoService.GetToDoItem(id);
+        var user = _userProvider.GetUserInfo();
+        var item = await _toDoService.GetToDoItem(user.Id, id);
         return item != null
             ? item // Ok(item)
             : NotFound();
@@ -63,7 +69,8 @@ public class ToDoItemsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ToDoItemDto>> Create([FromBody] CreateToDoItemRequest request)
     {
-        var createdItem = await _toDoService.CreateTodoItem(request);
+        var user = _userProvider.GetUserInfo();
+        var createdItem = await _toDoService.CreateTodoItem(user.Id, request);
         return createdItem;
     }
 
@@ -72,7 +79,8 @@ public class ToDoItemsController : ControllerBase
     [HttpPatch("{id}/status")]
     public async Task<ActionResult<ToDoItemDto>> Patch(int id, [FromBody] bool isCompleted)
     {
-        var todoItem = await _toDoService.ChangeTodoItemStatus(id, isCompleted);
+        var user = _userProvider.GetUserInfo();
+        var todoItem = await _toDoService.ChangeTodoItemStatus(user.Id, id, isCompleted);
         return todoItem != null
             ? todoItem
             : NotFound();

@@ -15,7 +15,9 @@ public class JwtService : IJwtService
         _config = config;
     }
 
-    public string GenerateSecurityToken(string email, 
+    public string GenerateSecurityToken(
+        string id,
+        string email, 
         IEnumerable<string> roles, 
         IEnumerable<Claim> userClaims)
     {
@@ -23,6 +25,7 @@ public class JwtService : IJwtService
         {
             new Claim(ClaimsIdentity.DefaultNameClaimType, email),
             new Claim(ClaimsIdentity.DefaultRoleClaimType, string.Join(",", roles)),
+            new Claim("userId", id),
             new Claim("permissions",JsonSerializer.Serialize( new String[]{"CanTest", "CanRead"}))
         }.Concat(userClaims);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Secret));

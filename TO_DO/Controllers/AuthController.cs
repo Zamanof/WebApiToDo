@@ -61,7 +61,7 @@ public class AuthController : ControllerBase
         var role = await _userManager.GetRolesAsync(user);
         var userClaims = await _userManager.GetClaimsAsync(user);
 
-        var accessToken = _jwtService.GenerateSecurityToken(user.Email, role, userClaims);
+        var accessToken = _jwtService.GenerateSecurityToken(user.Id, user.Email, role, userClaims);
 
         return new AuthTokenDto
         {
@@ -90,7 +90,7 @@ public class AuthController : ControllerBase
         var role = await _userManager.GetRolesAsync(user);
         var userClaims = await _userManager.GetClaimsAsync(user);
 
-        var accessToken = _jwtService.GenerateSecurityToken(user.Email, role, userClaims);
+        var accessToken = _jwtService.GenerateSecurityToken(user.Id,user.Email, role, userClaims);
 
         user.RefreshToken= Guid.NewGuid().ToString("N").ToLower();
         await _userManager.UpdateAsync(user);
@@ -113,7 +113,7 @@ public class AuthController : ControllerBase
         var role = await _userManager.GetRolesAsync(user);
         var userClaims = await _userManager.GetClaimsAsync(user);
 
-        var accessToken = _jwtService.GenerateSecurityToken(user.Email, role, userClaims);
+        var accessToken = _jwtService.GenerateSecurityToken(user.Id, user.Email, role, userClaims);
 
         user.RefreshToken = Guid.NewGuid().ToString("N").ToLower();
         await _userManager.UpdateAsync(user);
