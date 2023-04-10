@@ -105,6 +105,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<AuthTokenDto>> Refresh([FromBody] RefreshTokenRequest request)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(e => e.RefreshToken == request.RefreshToken);
+        
         if (user is null)
         {
             return Unauthorized();

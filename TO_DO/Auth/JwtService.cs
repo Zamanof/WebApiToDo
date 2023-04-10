@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace TO_DO.Auth;
 
@@ -22,7 +22,8 @@ public class JwtService : IJwtService
         var claims = new[]
         {
             new Claim(ClaimsIdentity.DefaultNameClaimType, email),
-            new Claim(ClaimsIdentity.DefaultRoleClaimType, string.Join(",", roles))
+            new Claim(ClaimsIdentity.DefaultRoleClaimType, string.Join(",", roles)),
+            new Claim("permissions",JsonSerializer.Serialize( new String[]{"CanTest", "CanRead"}))
         }.Concat(userClaims);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Secret));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

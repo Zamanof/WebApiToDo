@@ -8,9 +8,16 @@ using TO_DO.Data;
 using TO_DO.Models;
 
 namespace TO_DO;
-
+/// <summary>
+/// 
+/// </summary>
 public static class DI
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
 
@@ -51,7 +58,12 @@ public static class DI
     );
         return services;
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
     public static IServiceCollection AuthenticationAndAuthorization(
         this IServiceCollection services, IConfiguration configuration)
     {
