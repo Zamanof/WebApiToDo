@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using TO_DO.Data;
 using TO_DO.Auth;
 using TO_DO;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using TO_DO.DTOs.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -15,6 +18,9 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddFluentValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 

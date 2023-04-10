@@ -23,6 +23,25 @@ public class ToDoItemsController : ControllerBase
         _userProvider = userProvider;
     }
 
+
+    [Authorize(Roles ="Admin")]
+    [HttpGet("/api/users/{userId}/[controller]")]
+    public async Task<ActionResult<PaginatedListDto<ToDoItemDto>>> GetList(
+            [FromQuery] ToDoQueryFilters filters,
+            [FromQuery] PaginationRequest request,
+            string userId
+            )
+    {       
+        return await _toDoService.GetToDoItems(
+           userId,
+            request.Page,
+            request.PageSize,
+            filters.Search,
+            filters.IsCompleted
+            );
+    }
+
+
     // GET: api/<ToDoItemsController>
     [HttpGet]
     public async Task<ActionResult<PaginatedListDto<ToDoItemDto>>> GetList(
