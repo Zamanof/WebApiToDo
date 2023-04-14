@@ -6,11 +6,3 @@ public class Transaction
     public string Data { get; set; }
     public TransactionStatus Status { get; set; }
 }
-
-public enum TransactionStatus
-{
-    Created,
-    Processing,
-    Processed,
-    Aborted
-}
