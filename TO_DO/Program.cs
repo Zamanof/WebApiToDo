@@ -8,6 +8,7 @@ using FluentValidation;
 using TO_DO.DTOs.Validation;
 using Serilog;
 using Serilog.Events;
+using TO_DO.HostedServices;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -19,6 +20,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 //}
 //);
+
+builder.Services.AddHostedService<DatabaseClearJob>();
+builder.Services.AddSingleton<MessageQueue>();
+builder.Services.AddHostedService<TransactionProcessorJob>();
 
 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
