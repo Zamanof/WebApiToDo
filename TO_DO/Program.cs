@@ -9,6 +9,7 @@ using TO_DO.DTOs.Validation;
 using Serilog;
 using Serilog.Events;
 using TO_DO.HostedServices;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -26,7 +27,26 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddHostedService<TransactionProcessorJob>();
 //builder.Services.AddHostedService<ResetTransactionStatusBackgroundService>();
 
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionScopedJobFactory();
+    q.ScheduleJob<DatabaseClearCronJob>(trigger => trigger.WithCronSchedule("0/3 * * ? * * *"));
+    //// Just use the name of your job that you created in the Jobs folder.
+    //var jobKey = new JobKey("DatabaseClearCronJob");
+    //q.AddJob<DatabaseClearCronJob>(opts => opts.WithIdentity(jobKey));
 
+    //q.AddTrigger(opts => opts
+    //    .ForJob(jobKey)
+    //    .WithIdentity("DatabaseClearCronJob-trigger")
+    //    //This Cron interval can be described as "run every minute" (when second is zero)
+    //    .WithCronSchedule("0 * * ? * *")
+    //);
+});
+
+builder.Services.AddQuartzServer(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 
 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
