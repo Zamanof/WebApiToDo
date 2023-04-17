@@ -10,4 +10,5 @@ public class ToDoDbContext : IdentityDbContext
     }
     public DbSet<ToDoItem> ToDoItems => Set<ToDoItem>();
     public DbSet<AppUser> AppUsers => Set<AppUser>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
 }

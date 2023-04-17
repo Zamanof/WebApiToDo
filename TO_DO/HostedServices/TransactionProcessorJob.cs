@@ -17,12 +17,13 @@ namespace TO_DO.HostedServices
         {
             while (_run)
             {
-                var message = _messageQueue.Dequeue();
-                if (message is not null)
+                var transaction = await _messageQueue.Dequeue();
+                if (transaction is not null)
                 {
-                    Log.Fatal("Transaction {Data} Started", message.Data);
+                    Log.Fatal("Transaction {Data} Started", transaction.Data);
                     await Task.Delay(TimeSpan.FromSeconds(5));
-                    Log.Fatal("Transaction {Data} Finished", message.Data);
+                    //Log.Fatal("Transaction {Data} Finished", transaction.Data);
+                    await _messageQueue.Acknowlage(transaction.Id);
                 }
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }

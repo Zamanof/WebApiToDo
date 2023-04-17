@@ -21,9 +21,12 @@ var builder = WebApplication.CreateBuilder(args);
 //}
 //);
 
-builder.Services.AddHostedService<DatabaseClearJob>();
-builder.Services.AddSingleton<MessageQueue>();
-builder.Services.AddHostedService<TransactionProcessorJob>();
+//builder.Services.AddHostedService<DatabaseClearJob>();
+//builder.Services.AddSingleton<MessageQueue>();
+//builder.Services.AddHostedService<TransactionProcessorJob>();
+//builder.Services.AddHostedService<ResetTransactionStatusBackgroundService>();
+
+
 
 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
