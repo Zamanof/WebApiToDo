@@ -11,6 +11,7 @@ using Serilog.Events;
 using TO_DO.HostedServices;
 using Quartz;
 
+
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 //builder.Services.AddLogging(options =>
@@ -66,6 +67,8 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("TO_DOContext"));
 });
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

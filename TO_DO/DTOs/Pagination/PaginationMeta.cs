@@ -3,11 +3,11 @@
 public class PaginationMeta
 {
 
-    public PaginationMeta(int page, int pageSize, int totalPages)
+    public PaginationMeta(int page, int pageSize, int count)
     {
         Page = page;
         PageSize = pageSize;
-        TotalPages = Convert.ToInt32(Math.Ceiling(1.0 * totalPages / pageSize));
+        TotalPages = (count + pageSize - 1) / pageSize;
     }
 
     public int Page { get; }

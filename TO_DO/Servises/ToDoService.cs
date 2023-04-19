@@ -9,9 +9,12 @@ namespace TO_DO.Servises;
 public class ToDoService : IToDoService
 {
     private readonly ToDoDbContext _dbContext;
+    private readonly IEmailSender _emailSender;
 
-    public ToDoService(ToDoDbContext dbContext)
-    {        _dbContext = dbContext;
+    public ToDoService(ToDoDbContext dbContext, IEmailSender emailSender)
+    {
+        _dbContext = dbContext;
+        _emailSender = emailSender;
     }
 
     /// <summary>
@@ -60,6 +63,8 @@ public class ToDoService : IToDoService
         item = _dbContext.ToDoItems.Add(item).Entity;
 
         await _dbContext.SaveChangesAsync();
+
+        await _emailSender.SendEmail(user.Email, "New ToDo Added", item.Text);
 
         return new ToDoItemDto
         {
