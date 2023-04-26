@@ -169,24 +169,45 @@ public class UnitTest1
             Email = "test@gmail.com"
         }).Entity;
 
-        var createdToDoItem = new CreateToDoItemRequest { Text = "Test" };  
-            
+        var createdToDoItem = new CreateToDoItemRequest { Text = "Test" };            
 
         
         await dbContext.SaveChangesAsync();
 
         var emailSender = new Mock<IEmailSender>(MockBehavior.Strict);
+        //emailSender.Setup(e => e.SendEmail(user.Email, createdToDoItem.Text, "Salam"))
+        //    .Returns(Task.CompletedTask);        
         emailSender.Setup(e => e.SendEmail(user.Email, It.IsAny<string>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
-        
+
         var service = new ToDoService(dbContext, emailSender.Object);
 
         var retrivedToDoItem = await service.CreateTodoItem(user.Id, createdToDoItem);
 
         retrivedToDoItem.Should().NotBeNull();
 
-        emailSender.VerifyAll();
-        //emailSender.Verify(e=> e.SendEmail(user.Email, It.IsAny<string>(), It.IsAny<string>()));
-        
+        //emailSender.VerifyAll();
+        emailSender.Verify(e => e.SendEmail(user.Email, It.IsAny<string>(), It.IsAny<string>()));
+
+    }
+
+    [Fact]
+    public async Task CreateToDoItem_ThrowException_UserNotFound()
+    {
+        var userId = "123";
+        var todoItemToCreate = new CreateToDoItemRequest
+        {
+            Text = "Test"
+        };
+
+        var dbContext = new ToDoDbContext(new DbContextOptionsBuilder<ToDoDbContext>()
+           .UseInMemoryDatabase("test").Options);
+        var emailSender = new Mock<IEmailSender>();
+        var service = new ToDoService(dbContext, emailSender.Object);
+        await service
+            .Awaiting(s => s.CreateTodoItem(userId, todoItemToCreate))
+            .Should()
+            .ThrowAsync<KeyNotFoundException>();
+
     }
 }
