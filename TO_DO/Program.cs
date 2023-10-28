@@ -31,7 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddQuartz(q =>
 {
     q.UseMicrosoftDependencyInjectionScopedJobFactory();
-    q.ScheduleJob<DatabaseClearCronJob>(trigger => trigger.WithCronSchedule("0/3 * * ? * * *"));
+    q.ScheduleJob<DatabaseClearCronJob>(trigger => trigger.WithCronSchedule("* * 5 ? * * *"));
     //// Just use the name of your job that you created in the Jobs folder.
     //var jobKey = new JobKey("DatabaseClearCronJob");
     //q.AddJob<DatabaseClearCronJob>(opts => opts.WithIdentity(jobKey));
@@ -78,6 +78,7 @@ builder.Services.AddMemoryCache();
 
 
 builder.Services.AddFluentValidation();
+
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -88,7 +89,18 @@ builder.Services.AuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddSwagger();
 
 builder.Services.AddScoped<IToDoService, ToDoService>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy",
+        builder =>
+        {
+            builder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins("http://localhost:3000")
+            .AllowCredentials();
+        });
+});
 
 
 var app = builder.Build();
@@ -102,6 +114,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseSerilogRequestLogging();
+app.UseCors("CORSPolicy");
 
 app.UseResponseCaching();
 

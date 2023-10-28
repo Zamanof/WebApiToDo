@@ -64,7 +64,7 @@ public class ToDoService : IToDoService
 
         await _dbContext.SaveChangesAsync();
 
-        await _emailSender.SendEmail(user.Email, "New ToDo Added", item.Text);
+        //await _emailSender.SendEmail(user.Email, "New ToDo Added", item.Text);
 
         return new ToDoItemDto
         {

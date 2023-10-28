@@ -24,7 +24,7 @@ public class ToDoItemsController : ControllerBase
     }
 
 
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     [HttpGet("/api/users/{userId}/[controller]")]
     public async Task<ActionResult<PaginatedListDto<ToDoItemDto>>> GetList(
             [FromQuery] ToDoQueryFilters filters,
